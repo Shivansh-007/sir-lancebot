@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import socket
-from typing import Any, Optional
+from typing import Optional
 
 import discord
 from aiohttp import AsyncResolver, ClientSession, TCPConnector
@@ -46,7 +46,7 @@ class Bot(commands.Bot):
     async def get_unloaded_extensions(self) -> None:
         """Get all the unloaded extensions from cache."""
         # For testing sir-lancebot#705
-        await self.unloads_cache.set("unloaded", 'bot.exts.evergreen.catify | bot.exts.evergreen.xkd')
+        await self.unloads_cache.set("unloaded", "bot.exts.evergreen.catify | bot.exts.evergreen.xkd")
         cache_dict = await self.unloads_cache.to_dict()
         extensions = cache_dict.get("unloaded")
         self.unloaded_extensions = [] if not extensions else extensions.split(" | ")
@@ -69,7 +69,7 @@ class Bot(commands.Bot):
         if self.redis_session:
             await self.redis_session.close()
 
-    def load_extension(self, name: str, *, package: Any = None) -> None:
+    def load_extension(self, name: str, *, package: Optional[str] = None) -> None:
         """Load the extension only if it is not present in unloaded cache."""
         if name in self.unloaded_extensions:
             self.unloaded_extensions.remove(name)
@@ -126,7 +126,7 @@ class Bot(commands.Bot):
             if name.startswith("_"):
                 continue
             if channel_id not in all_channels_ids:
-                log.error(f'Channel "{name}" with ID {channel_id} missing')
+                log.error(f"Channel '{name}' with ID {channel_id} missing")
 
     async def send_log(self, title: str, details: str = None, *, icon: str = None) -> None:
         """Send an embed message to the devlog channel."""
@@ -213,7 +213,7 @@ class Bot(commands.Bot):
         if not self.unloaded_extensions:
             return
 
-        extensions_msg = '- ' + '\n- '.join(self.unloaded_extensions)
+        extensions_msg = "- " + "\n- ".join(self.unloaded_extensions)
         dev_alerts_channel = self.get_channel(constants.Channels.dev_alerts)
         core_dev_role = self.get_guild(constants.Client.guild).get_role(constants.Roles.core_developers)
         msg = (
