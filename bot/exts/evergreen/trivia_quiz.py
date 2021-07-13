@@ -18,8 +18,8 @@ from bot.constants import Colours, NEGATIVE_REPLIES, Roles
 logger = logging.getLogger(__name__)
 
 DEFAULT_QUESTION_LIMIT = 6
-STANDARD_VARIATION_TOLERANCE = 83
-DYNAMICALLY_GEN_VARIATION_TOLERANCE = 95
+STANDARD_VARIATION_TOLERANCE = 88
+DYNAMICALLY_GEN_VARIATION_TOLERANCE = 97
 
 MAX_ERROR_FETCH_TRIES = 3
 
@@ -228,6 +228,8 @@ class TriviaQuiz(commands.Cog):
             "math": "General questions about mathematics ranging from grade 8 to grade 12.",
             "science": "Put your understanding of science to the test!",
             "wikipedia": "Guess the title of random wikipedia passages.",
+            "cs": "A large variety of computer science questions.",
+            "python": "Trivia on our amazing language, Python!",
         }
 
         self.get_wiki_questions.start()
@@ -290,12 +292,13 @@ class TriviaQuiz(commands.Cog):
         Start a quiz!
 
         Questions for the quiz can be selected from the following categories:
-        - general: Test your general knowledge. (default)
+        - general: Test your general knowledge.
         - retro: Questions related to retro gaming.
         - math: General questions about mathematics ranging from grade 8 to grade 12.
         - science: Put your understanding of science to the test!
         - wikipedia: Guess the title of random wikipedia passages.
-
+        - cs: A large variety of computer science questions.
+        - python: Trivia on our amazing language, Python!
         (More to come!)
         """
         if ctx.channel.id not in self.game_status:
@@ -356,7 +359,7 @@ class TriviaQuiz(commands.Cog):
             start_embed = self.make_start_embed(category)
 
             await ctx.send(embed=start_embed)  # send an embed with the rules
-            await asyncio.sleep(1)
+            await asyncio.sleep(5)
 
         done_questions = []
         hint_no = 0
@@ -527,22 +530,24 @@ class TriviaQuiz(commands.Cog):
 
         Note: Only mods or the owner of the quiz can stop it.
         """
-        if self.game_status[ctx.channel.id] is True:
-            # Check if the author is the game starter or a moderator.
-            if ctx.author == self.game_owners[ctx.channel.id] or any(
-                Roles.moderator == role.id for role in ctx.author.roles
-            ):
+        try:
+            if self.game_status[ctx.channel.id]:
+                # Check if the author is the game starter or a moderator.
+                if ctx.author == self.game_owners[ctx.channel.id] or any(
+                    Roles.moderator == role.id for role in ctx.author.roles
+                ):
+                    self.game_status[ctx.channel.id] = False
+                    del self.game_owners[ctx.channel.id]
+                    self.game_player_scores[ctx.channel.id] = {}
 
-                await ctx.send("Quiz stopped.")
-                await self.declare_winner(ctx.channel, self.game_player_scores[ctx.channel.id])
+                    await ctx.send("Quiz stopped.")
+                    await self.declare_winner(ctx.channel, self.game_player_scores[ctx.channel.id])
 
-                self.game_status[ctx.channel.id] = False
-                del self.game_owners[ctx.channel.id]
-                self.game_player_scores[ctx.channel.id] = {}
-
+                else:
+                    await ctx.send(f"{ctx.author.mention}, you are not authorised to stop this game :ghost:!")
             else:
-                await ctx.send(f"{ctx.author.mention}, you are not authorised to stop this game :ghost:!")
-        else:
+                await ctx.send("No quiz running.")
+        except KeyError:
             await ctx.send("No quiz running.")
 
     @quiz_game.command(name="leaderboard")

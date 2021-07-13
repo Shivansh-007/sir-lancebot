@@ -22,6 +22,7 @@ __all__ = (
     "Wolfram",
     "Reddit",
     "RedisConfig",
+    "RedirectOutput",
     "MODERATION_ROLES",
     "STAFF_ROLES",
     "WHITELISTED_CHANNELS",
@@ -112,7 +113,6 @@ class Channels(NamedTuple):
     off_topic_1 = 463035241142026251
     off_topic_2 = 463035268514185226
     community_bot_commands = int(environ.get("CHANNEL_COMMUNITY_BOT_COMMANDS", 607247579608121354))
-    hacktoberfest_2020 = 760857070781071431
     voice_chat_0 = 412357430186344448
     voice_chat_1 = 799647045886541885
     staff_voice = 541638762007101470
@@ -126,6 +126,7 @@ class Categories(NamedTuple):
     media = 799054581991997460
     staff = 364918151625965579
 
+codejam_categories_name = "Code Jam"  # Name of the codejam team categories
 
 class Client(NamedTuple):
     name = "Sir Lancebot"
@@ -189,12 +190,14 @@ class Emojis:
     dice_5 = "<:dice_5:755891608091885627>"
     dice_6 = "<:dice_6:755891607680843838>"
 
-    issue = "<:IssueOpen:629695470327037963>"
-    issue_closed = "<:IssueClosed:629695470570307614>"
-    pull_request = "<:PROpen:629695470175780875>"
-    pull_request_closed = "<:PRClosed:629695470519713818>"
-    pull_request_draft = "<:PRDraft:829755345425399848>"
-    merge = "<:PRMerged:629695470570176522>"
+    # These icons are from Github's repo https://github.com/primer/octicons/
+    issue_open = "<:IssueOpen:852596024777506817>"
+    issue_closed = "<:IssueClosed:852596024739758081>"
+    issue_draft = "<:IssueDraft:852596025147523102>"  # Not currently used by Github, but here for future.
+    pull_request_open = "<:PROpen:852596471505223781>"
+    pull_request_closed = "<:PRClosed:852596024732286976>"
+    pull_request_draft = "<:PRDraft:852596025045680218>"
+    pull_request_merged = "<:PRMerged:852596100301193227>"
 
     number_emojis = {
         1: "\u0031\ufe0f\u20e3",
@@ -214,6 +217,9 @@ class Emojis:
 
     x = "\U0001f1fd"
     o = "\U0001f1f4"
+
+    x_square = "<:x_square:632278427260682281>"
+    o_square = "<:o_square:632278452413661214>"
 
     status_online = "<:status_online:470326272351010816>"
     status_idle = "<:status_idle:470326266625785866>"
@@ -303,6 +309,10 @@ class RedisConfig(NamedTuple):
 class Source:
     github = "https://github.com/python-discord/sir-lancebot"
     github_avatar_url = "https://avatars1.githubusercontent.com/u/9919"
+
+
+class RedirectOutput:
+    delete_delay: int = 10
 
 
 class Reddit:
